@@ -3,6 +3,9 @@
 This is a digital alarm clock that uses Soviet surplus IV-19 (ИВ-19) incandescent ["numitron"](http://www.decadecounter.com/vta/tubepage.php?item=10) displays. 
 
 
+**[Video overview](https://www.youtube.com/watch?v=N-rBARzu5Fk)**
+
+
 ## Features
 
 The feature set is similar to that of my [Panaplex clock](https://github.com/74hc595/Panaplex-Clock):
