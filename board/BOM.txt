@@ -1,0 +1,30 @@
+IV-19 Numitron Clock Bill of Materials
+======================================
+
+BT1                     12mm coin cell holder, SMD, Linx BAT-HLD-012-SMT
+C1, C2, C3              0.1uF multilayer ceramic capacitor, 16V or higher, 0603
+C4                      1uF X7R multilayer ceramic capacitor, 16V or higher, 0603
+C5                      2.2uF X7R multilayer ceramic capacitor, 16V or higher, 0603
+C6                      10uF multilayer ceramic capacitor, 25V, 1206, AVX 12063C106KAT2A
+C7                      10uF tantalum capacitor, 20V, 1210, AVX TAJB106K020RNJV
+J101                    1x31 0.1" straight header pin
+J102                    1x30 0.1" straight header pin
+J201                    1x31 0.1" straight header socket
+J202                    1x30 0.1" straight header socket
+J204                    1x6 0.1" right-angle header pin
+J205                    USB-B mini socket, straight, Amphenol UE25BE5510H
+N1, N2, N3, N4, N5, N6  IV-19 numitron tube (eBay)
+                        Pin sockets: Mill-Max 0327-0-15-15-34-27-10-0, qty 60
+R1, R2, R3, R4, R5      910 ohm resistor, 1/8 watt, 1206
+R6                      240 ohm resistor, 1/8 watt, 1206
+R7                      470 ohm resistor, 1/8 watt, 1206
+SW1, SW2, SW3           Tactile switch, 6mm, through hole, 13mm actuator
+U1, U2, U3, U4          Display driver, ST STP16CP05MTR
+U5                      Cortex-M0+ microcontroller, NXP LPC811M001JDH16J
+U6                      Real-time clock, NXP PCF2129AT/2,518
+U7                      3.3V LDO regulator, TI TPS70933DBVR
+U8                      3A adjustable LDO regulator, TI LM1085ISX-ADJ/NOPB
+Y1                      Piezo sounder, Murata PKLCS1212E2000-R1
+
+(J203 omitted)
+
