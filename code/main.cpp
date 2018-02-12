@@ -112,7 +112,7 @@ int main(void)
   button_init(&b3, PIN_SW3);
   rtc_init();
   rtc_get_state(&rtc);
-  rtc_dst_transition_check(&rtc); /* XXX this does not work -- account for DST transitions while on battery power */
+  rtc_dst_transition_check(&rtc);
   SysTick_Config(__SYSTEM_CLOCK/MAIN_TICK_HZ);
   while (1) { __WFI(); }
 }
