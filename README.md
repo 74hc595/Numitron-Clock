@@ -1,7 +1,5 @@
 # IV-19 Numitron Alarm Clock
 
---
-
 This is a digital alarm clock that uses Soviet surplus IV-19 (ИВ-19) incandescent ["numitron"](http://www.decadecounter.com/vta/tubepage.php?item=10) displays. 
 
 
