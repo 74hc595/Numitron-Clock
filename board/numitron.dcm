@@ -1,0 +1,8 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP IV-19
+D 9-segment "numitron" indicator tube
+K DEV
+$ENDCMP
+#
+#End Doc Library

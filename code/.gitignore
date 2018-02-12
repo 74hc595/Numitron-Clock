@@ -1,0 +1,9 @@
+*.o
+*.d
+*.elf
+*.hex
+*.swp
+*~
+.DS_Store
+.vscode
+numitron-clock.s

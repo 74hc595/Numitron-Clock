@@ -1,0 +1,24 @@
+Board Initial Revision Errata - February 11, 2018
+=================================================
+
+MOSI is connected to U5 pin 7, which is open-drain and not usable as a serial
+output. The latest code has reassigned MOSI to U5 pin 14.
+
+1. Cut the middle of the five traces between U5 and U6.
+2. Solder a jumper wire from U5 pin 14 to U6 pin 2.
+
+
+
+LATCH needs a pullup resistor.
+
+1. Solder a 1.6k resistor to U6 pin 20.
+2. Solder a jumper wire from the other end of the resistor to U1 pin 4.
+
+
+
+The display board is 0.1" wider than the control board.
+
+
+
+The mounting holes on the display board are unused.
+
