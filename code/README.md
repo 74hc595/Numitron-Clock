@@ -2,7 +2,7 @@
 
 ### Requirements
 - GNU `arm-none-eabi-gcc` toolchain
-- `lpc21isp` v1.97 (available from Homebrew on a Mac or from [GitHub](https://github.com/capiman/lpc21isp)
+- `lpc21isp` v1.97 (available from Homebrew on a Mac or from [GitHub](https://github.com/capiman/lpc21isp))
 - 5V FTDI USB-serial cable
 
 ### To build
