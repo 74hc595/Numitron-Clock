@@ -7,15 +7,15 @@ PROGRAM_NAME = numitron-clock
 LINKER_SCRIPT = lpc811.ld
 OBJ = delay.o \
       pins.o \
-			spi.o \
-			display.o \
-			beeper.o \
-			button.o \
-			bcd.o \
-			dst_dates.o \
-			date.o \
-			rtc.o \
-			app.o \
+      spi.o \
+      display.o \
+      beeper.o \
+      button.o \
+      bcd.o \
+      dst_dates.o \
+      date.o \
+      rtc.o \
+      app.o \
       main.o \
       system_LPC8xx.o \
       gcc_startup_lpc8xx.o \
