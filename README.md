@@ -48,7 +48,7 @@ There is a column of three pushbuttons on the back. From top to bottom, they are
 
 #### Time display
 
-Normally, the clock shows hours/minutes/seconds in 24-hour format. (12-hour AM/PM is not supported.) At the 26th second of even minutes, the date is shown (month/day/year, sorry rest-of-the-world) for 5 seconds. If the backup battery is failing or not present, the display will also briefly show `BAT LO`.
+At the 26th second of even minutes, the date is shown (month/day/year, sorry rest-of-the-world) for 5 seconds. If the backup battery is failing or not present, the display will also briefly show `BAT LO`.
 
 During time display, each button has two functions:
 
@@ -69,7 +69,7 @@ Hold `◉` to cancel and return to the normal time display. Any changes to the t
 
 ### Setting the alarm
 
-The letters `AL` should be flashing. Pressing `+` or `−` toggles the alarm on and off. When the alarm is active, the decimal point of the rightmost digit will illuminate.
+The letter `A.` should be flashing. Pressing `+` or `−` toggles the alarm on and off. When the alarm is active, the decimal point of the rightmost digit will illuminate.
 
 Press `◉` to advance to the hours. Use `+`/`−` to change the hour. Press `◉` to advance to the minutes and use `+`/`−` to change the minute.
 
@@ -96,7 +96,7 @@ Pressing `+` and `−` cycle through the menu options:
 - `CYCL` - turn date cycling on even minutes on/off (`Y`/`N`)
 - `STYLE>` - press `◉` to change time display style (see below)
 - Backup battery status: will show `BAT OK` or `BAT LO`
-- Firmware version, e.g. `Ver 1.0`
+- Firmware version, e.g. `Ver 1.1`
 - `DONE>` - press `◉` to return to normal time display
 
 Hold `◉` to cancel and return to the normal time display.
@@ -115,7 +115,7 @@ Press `+` and `−` to cycle through four time display options:
 
 - `hh.mm.ss` (hour, minute, second)
 - `hh.mm` (hour and minute only)
-- `hh:mm` (hour and minute only)
+- `h.mm a` (12-hour display with hour, minute, and AM/PM indicator. `◿`=AM, `◸`=PM)
 - `hh . mm` (hour and minute only)
 
 Press `◉` to return to the menu.
@@ -131,3 +131,13 @@ To return to normal operation, disconnect and reconnect the power.
 ## Power considerations
 
 The clock can draw up to 1.5A during operation. It's recommended that you use a high-quality USB power adapter (10 watts or higher), and a "28/24 AWG" USB mini-B cable.
+
+## Version history
+
+### Version 1.1 (April 29, 2018)
+
+- 12-hour display style added. Selectable from the `STYLE>` menu. When enabled, 12-hour format with AM/PM indicator (`◿`=AM, `◸`=PM) is used when displaying the time, setting the time, and setting the alarm.
+
+### Version 1.0 (February 11, 2018)
+
+- Initial release

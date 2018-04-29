@@ -59,8 +59,8 @@ const DateApp App_Date(&App_Clock);
 const AlarmGoingOffApp App_AlarmGoingOff(&App_Clock);
 
 const SetTimeComponentsInitialApp App_BeginSetTime(&App_SetHour);
-const SetTimeComponentApp App_SetHour(0x00, 0x23, 0b10011000, &tmp1, &App_SetMinute);
-const SetTimeComponentApp App_SetMinute(0x00, 0x59, 0b000110, &tmp2, &App_FinishSetTime);
+const SetTimeComponentApp App_SetHour(0x00, 0x23, 0b10011000, 0b10110001, &tmp1, &App_SetMinute);
+const SetTimeComponentApp App_SetMinute(0x00, 0x59, 0b000110, 0b001100, &tmp2, &App_FinishSetTime);
 const SetTimeComponentsFinishApp App_FinishSetTime(&App_Clock);
 
 const SetDateComponentsInitialApp App_BeginSetDate(&App_SetMonth);
@@ -70,8 +70,8 @@ const SetDateComponentApp App_SetYear(0x00, 0x99, 0b000011, &tmp3, &App_FinishSe
 const SetDateComponentsFinishApp App_FinishSetDate(&App_SetDatePrompt);
 
 const SetAlarmApp App_SetAlarm(&App_SetAlarmHour);
-const SetAlarmComponentApp App_SetAlarmHour(0x00, 0x23, 0b10001100, &tmp1, &App_SetAlarmMinute);
-const SetAlarmComponentApp App_SetAlarmMinute(0x00, 0x59, 0b10000011, &tmp2, &App_FinishSetAlarm);
+const SetAlarmComponentApp App_SetAlarmHour(0x00, 0x23, 0b10001100, 0b10011001, &tmp1, &App_SetAlarmMinute);
+const SetAlarmComponentApp App_SetAlarmMinute(0x00, 0x59, 0b10000011, 0b10000110, &tmp2, &App_FinishSetAlarm);
 const SetAlarmComponentsFinishApp App_FinishSetAlarm(&App_Clock);
 
 const BatteryLowCheckApp App_DateCycleStart(&App_Date);
@@ -104,6 +104,30 @@ static void draw_alarm_indicator()
   } else {
     display[0] &= (~sP);
   }
+}
+
+
+static bcd_t to_12_hour(bcd_t hour)
+{
+  bcd_t new_hr;
+  if (hour == 0x00) { /* midnight */
+    new_hr = 0x12;
+  } else if (hour <= 0x12) {
+    new_hr = hour;
+  } else {
+    new_hr = hour - ((hour == 0x20 || hour == 0x21) ? 24 : 18);
+  }
+  return suppress_leading_zero(new_hr);
+}
+
+
+bool in_12_hour_mode() {
+  return (rtc.settings.display_style == 2);
+}
+
+
+static uint16_t am_pm_indicator_for_hour(bcd_t hour) {
+  return (hour < 0x12) ? sB|sG|sH : sE|sG|sI;
 }
 
 
@@ -191,10 +215,13 @@ void ClockApp::draw() const
       break;
 
     case 2:
-      display[5] = 0;
-      display_buffer_write_bcd(4, rtc.time.hours);
-      display_buffer_write_bcd(1, rtc.time.minutes);
-      display[2] = (ticks_since_last_second <= 30) ? sH|sI : 0;
+      display[1] = 0;
+      display[0] = am_pm_indicator_for_hour(rtc.time.hours);
+      display_buffer_write_bcd(3, rtc.time.minutes);
+      display_buffer_write_bcd(5, to_12_hour(rtc.time.hours));
+      if (ticks_since_last_second <= 30) {
+        display[4] |= sP;
+      }
       break;
 
     case 3:
@@ -327,9 +354,17 @@ AppPtr SetTimeComponentApp::update(event_set_t events) const
 
 void SetTimeComponentApp::draw() const
 {
-  display_buffer_write_bcd(4, tmp1);
-  display_buffer_write_bcd(2, tmp2);
-  display[3] |= sP;
+  if (!in_12_hour_mode()) {
+    display_buffer_write_bcd(4, tmp1);
+    display_buffer_write_bcd(2, tmp2);
+    display[3] |= sP;
+  } else {
+    display_buffer_write_bcd(5, to_12_hour(tmp1));
+    display_buffer_write_bcd(3, tmp2);
+    display[4] |= sP;
+    display[1] = 0;
+    display[0] = am_pm_indicator_for_hour(tmp1);
+  }
 }
 
 
@@ -425,11 +460,17 @@ AppPtr SetAlarmApp::update(event_set_t events) const
 
 void SetAlarmComponentApp::draw() const
 {
-  display[5] = c_A;
-  display[4] = c_L|sP;
-  display_buffer_write_bcd(3, tmp1);
-  display_buffer_write_bcd(1, tmp2);
-  display[2] |= sP;
+  display[5] = c_A|sP;
+  if (!in_12_hour_mode()) {
+    display_buffer_write_bcd(3, tmp1);
+    display_buffer_write_bcd(1, tmp2);
+    display[2] |= sP;
+  } else {
+    display_buffer_write_bcd(4, to_12_hour(tmp1));
+    display_buffer_write_bcd(2, tmp2);
+    display[0] = am_pm_indicator_for_hour(tmp1);
+    display[3] |= sP;
+  }
   draw_alarm_indicator();
 }
 

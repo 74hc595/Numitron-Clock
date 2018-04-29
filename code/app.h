@@ -7,6 +7,7 @@
 #define APP_IDLE_TIMEOUT  (60*5)
 
 using AppPtr = const struct App *;
+bool in_12_hour_mode();
 
 struct App {
   virtual void init() const;
@@ -63,8 +64,8 @@ struct SetTimeComponentsInitialApp : public ForwardingApp {
 };
 
 struct SetTimeComponentApp : public App {
-  constexpr SetTimeComponentApp(bcd_t minval, bcd_t maxval, uint8_t flashmask, bcd_t *valptr, AppPtr nextapp)
-    : minval_(minval), maxval_(maxval), flashmask_(flashmask), valptr_(valptr), nextapp_(nextapp) {}
+  constexpr SetTimeComponentApp(bcd_t minval, bcd_t maxval, uint8_t flashmask, uint8_t flashmask_12hr, bcd_t *valptr, AppPtr nextapp)
+    : minval_(minval), maxval_(maxval), flashmask_(flashmask), flashmask_12hr_(flashmask_12hr), valptr_(valptr), nextapp_(nextapp) {}
   virtual AppPtr update(event_set_t events) const override;
   virtual void increment_value() const { *valptr_ = bcd_increment_wrap(*valptr_, minval_, max_value()); }
   virtual void decrement_value() const { *valptr_ = bcd_decrement_wrap(*valptr_, minval_, max_value()); }
@@ -72,11 +73,12 @@ struct SetTimeComponentApp : public App {
   virtual void did_update() const {};
   virtual void draw() const;
   virtual uint32_t timeout() const { return APP_IDLE_TIMEOUT; }
-  virtual uint8_t flash_mask() const override { return flashmask_; }
+  virtual uint8_t flash_mask() const override { return in_12_hour_mode() ? flashmask_12hr_ : flashmask_; }
   virtual AppPtr cancel_app() const;
   const bcd_t minval_;
   const bcd_t maxval_;
   const uint8_t flashmask_;
+  const uint8_t flashmask_12hr_;
   bcd_t *valptr_;
   const AppPtr nextapp_;
 };
@@ -94,7 +96,7 @@ struct SetDateComponentsInitialApp : public ForwardingApp {
 
 struct SetDateComponentApp : public SetTimeComponentApp {
   constexpr SetDateComponentApp(bcd_t minval, bcd_t maxval, uint8_t flashmask, bcd_t *valptr, AppPtr nextapp)
-    : SetTimeComponentApp(minval, maxval, flashmask, valptr, nextapp) {}
+    : SetTimeComponentApp(minval, maxval, flashmask, flashmask, valptr, nextapp) {}
   virtual void draw() const override;
   virtual void did_update() const override;
   virtual AppPtr cancel_app() const override;
@@ -113,18 +115,17 @@ struct SetDateComponentsFinishApp : public ForwardingApp {
 };
 
 struct SetAlarmComponentApp : public SetTimeComponentApp {
-  constexpr SetAlarmComponentApp(bcd_t minval, bcd_t maxval, uint8_t flashmask, bcd_t *valptr, AppPtr nextapp)
-    : SetTimeComponentApp(minval, maxval, flashmask, valptr, nextapp) {}
+  constexpr SetAlarmComponentApp(bcd_t minval, bcd_t maxval, uint8_t flashmask, uint8_t flashmask_12hr, bcd_t *valptr, AppPtr nextapp)
+    : SetTimeComponentApp(minval, maxval, flashmask, flashmask_12hr, valptr, nextapp) {}
   virtual void draw() const override;
   virtual AppPtr cancel_app() const override;
 };
 
 struct SetAlarmApp : public SetAlarmComponentApp {
   constexpr SetAlarmApp(AppPtr nextapp)
-    : SetAlarmComponentApp(0, 0, 0b110000, nullptr, nextapp) {}
+    : SetAlarmComponentApp(0, 0, 0b100000, 0b100000, nullptr, nextapp) {}
   virtual void init() const override;
   virtual AppPtr update(event_set_t events) const override;
-  virtual uint8_t flash_mask() const override { return 0b110000; }
 };
 
 struct SetAlarmComponentsFinishApp : public ForwardingApp {
