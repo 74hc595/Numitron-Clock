@@ -2,7 +2,7 @@
 #define VERSION_H_
 
 #define FIRMWARE_VERSION_MAJOR 1
-#define FIRMWARE_VERSION_MINOR 1
+#define FIRMWARE_VERSION_MINOR 2
 
 /**
  * In "programmer mode" the bootloader can be entered by holding the top button

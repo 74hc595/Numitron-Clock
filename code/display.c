@@ -5,6 +5,31 @@
 
 #include <string.h>
 
+/**
+ * 10-segment patterns for the digits 0 through 9 and letters a through f.
+ */
+const uint16_t hex_digit_patterns[16] = {
+  c_0, c_1, c_2, c_3, c_4, c_5, c_6, c_7,
+  c_8, c_9, c_a, c_b, c_c, c_d, c_e, c_f
+};
+
+/**
+ * 10-segment patterns for the digits 0 through 9.
+ * 0xA is the "AM" indicator and 0xB is the "PM" indicator.
+ * 0xC through 0xF are blank.
+ */
+const uint16_t bcd_digit_patterns[16] = {
+  c_0,  c_1,  c_2,  c_3,  c_4,  c_5,  c_6,  c_7,
+  c_8,  c_9,  c_am, c_pm, 0,    0,    0,    0
+};
+
+const uint16_t bcd_digit_patterns_alt[16] = {
+  c_0alt, c_1alt, c_2alt, c_3alt, c_4alt, c_5alt, c_6alt, c_7alt,
+  c_8alt, c_9alt, c_Aalt, c_P,    0,      0,      0,      0
+};
+
+
+
 /* STP16CP05 can do 30 MHz */
 #define DISPLAY_SERIAL_BIT_RATE 30000000
 #define DISPLAY_SPI_DIV         ((__SYSTEM_CLOCK/DISPLAY_SERIAL_BIT_RATE)-1)
@@ -21,6 +46,7 @@
  */
 static uint64_t raw_segment_buffer = 0;
 static uint32_t display_tick = 0;
+static bool alt_digit_font = false;
 
 /**
  * User-exposed state
@@ -28,7 +54,7 @@ static uint32_t display_tick = 0;
 static uint32_t display_brightness = DISPLAY_MAX_BRIGHTNESS;
 uint16_t display[DISPLAY_NUM_DIGITS] = {0};
 
-uint8_t display_set_brightness(uint8_t brightness)
+void display_set_brightness(uint8_t brightness)
 {
   if (brightness < DISPLAY_MIN_BRIGHTNESS) {
     display_brightness = DISPLAY_MIN_BRIGHTNESS;
@@ -36,45 +62,6 @@ uint8_t display_set_brightness(uint8_t brightness)
     display_brightness = DISPLAY_MAX_BRIGHTNESS;
   } else {
     display_brightness = brightness;
-  }
-  return brightness;
-}
-
-
-uint8_t display_increase_brightness(void)
-{
-  if (display_brightness < DISPLAY_MAX_BRIGHTNESS) {
-    display_brightness++;
-  }
-  return display_brightness;
-}
-
-
-uint8_t display_increase_brightness_wrap(void)
-{
-  if (display_brightness >= DISPLAY_MAX_BRIGHTNESS) {
-    return display_set_brightness(DISPLAY_MIN_BRIGHTNESS);
-  } else {
-    return display_increase_brightness();
-  }
-}
-
-
-uint8_t display_decrease_brightness(void)
-{
-  if (display_brightness > DISPLAY_MIN_BRIGHTNESS) {
-    display_brightness--;
-  }
-  return display_brightness;
-}
-
-
-uint8_t display_decrease_brightness_wrap(void)
-{
-  if (display_brightness <= DISPLAY_MIN_BRIGHTNESS) {
-    return display_set_brightness(DISPLAY_MAX_BRIGHTNESS);
-  } else {
-    return display_decrease_brightness();
   }
 }
 
@@ -239,10 +226,17 @@ void display_buffer_write_hex(uint8_t pos, uint8_t value)
 }
 
 
+static const uint16_t *current_digit_font(void)
+{
+  return (alt_digit_font) ? bcd_digit_patterns_alt : bcd_digit_patterns;
+}
+
+
 void display_buffer_write_bcd(uint8_t pos, bcd_t value)
 {
-  display[pos]   = bcd_digit_patterns[(value >> 4) & 0xF];
-  display[pos-1] = bcd_digit_patterns[value & 0xF];
+  const uint16_t *font = current_digit_font();
+  display[pos]   = font[(value >> 4) & 0xF];
+  display[pos-1] = font[value & 0xF];
 }
 
 
@@ -263,13 +257,14 @@ void display_buffer_set_digits(const uint16_t *patterns)
 }
 
 
+uint16_t pattern_for_bcd_digit(bcd_t digit)
+{
+  const uint16_t *font = current_digit_font();
+  return font[digit & 0xF];
+}
 
-const uint16_t hex_digit_patterns[16] = {
-  c_0, c_1, c_2, c_3, c_4, c_5, c_6, c_7,
-  c_8, c_9, c_a, c_b, c_c, c_d, c_e, c_f
-};
+void display_set_digit_font(bool alt_font)
+{
+  alt_digit_font = alt_font;
+}
 
-const uint16_t bcd_digit_patterns[16] = {
-  c_0, c_1, c_2, c_3, c_4, c_5, c_6, c_7,
-  c_8, c_9, 0,   0,   0,   0,   0,   0
-};

@@ -5,6 +5,7 @@ extern "C" {
 #endif
 
 #include "bcd.h"
+#include <stdbool.h>
 
 /**
  * Number of digits in the display.
@@ -69,33 +70,17 @@ void display_buffer_and_digits(uint8_t digit_mask, uint16_t pattern);
 
 void display_buffer_set_digits(const uint16_t *patterns);
 
+void display_set_brightness(uint8_t brightness);
 
+void display_set_digit_font(bool alt_font);
 
-/**
- * Change brightness level. Returns the new level.
- */
-uint8_t display_set_brightness(uint8_t brightness);
-uint8_t display_increase_brightness(void);
-uint8_t display_increase_brightness_wrap(void);
-uint8_t display_decrease_brightness(void);
-uint8_t display_decrease_brightness_wrap(void);
+uint16_t pattern_for_bcd_digit(bcd_t digit);
 
 /**
  * Turns off display completely. (disables segment preheating)
  */
 void display_off();
 
-
-/**
- * 10-segment patterns for the digits 0 through 9 and letters a through f.
- */
-extern const uint16_t hex_digit_patterns[16];
-
-/**
- * 10-segment patterns for the digits 0 through 9, with a blank for values
- * 0xA through 0xF.
- */
-extern const uint16_t bcd_digit_patterns[16];
 
 enum segment_bits {
   sA = (1<<0),
@@ -121,6 +106,18 @@ enum segment_bits {
 #define c_7 (sA|sE|sH)
 #define c_8 (sA|sB|sC|sD|sE|sF|sG)
 #define c_9 (sA|sB|sF|sG|sI)
+
+#define c_0alt  c_0
+#define c_1alt  (sB|sC)
+#define c_2alt  (sA|sB|sD|sE|sG)
+#define c_3alt  (sA|sB|sC|sD|sG)
+#define c_4alt  c_4
+#define c_5alt  c_5
+#define c_6alt  (sC|sD|sE|sF|sG)
+#define c_7alt  (sA|sB|sC)
+#define c_8alt  c_8
+#define c_9alt  (sA|sB|sC|sF|sG)
+#define c_Aalt  (sA|sB|sC|sE|sF|sG)
 
 #define c_A (sB|sC|sE|sG|sH)
 #define c_B (sA|sC|sD|sE|sF|sG|sH)
@@ -160,6 +157,8 @@ enum segment_bits {
 #define c_z (sD|sG|sI)
 
 #define c_arrow (sG|sI)
+#define c_am    (sB|sG|sH)
+#define c_pm    (sE|sG|sI)
 
 /* Compile-time conversion of a digit to a segment pattern */
 #define PASTE(x,y) x##y

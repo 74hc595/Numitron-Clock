@@ -17,7 +17,7 @@ The feature set is similar to that of my [Panaplex clock](https://github.com/74h
 - Piezo beeper alarm
 - Automatic leap year correction up to 2099
 - Automatic daylight saving time correction (US) up to 2099
-- 7-level brightness control
+- 4-level brightness control
 - Sleep mode: can be configured to keep the display blanked and only show the time for a few seconds at the press of a button
 
 
@@ -93,10 +93,11 @@ Pressing `+` and `−` cycle through the menu options:
 - `zzz` - turn sleep mode on/off (`Y`/`N`)
 - `DATE>` - press `◉` to set date (see below)
 - `A.DST` - turn automatic daylight saving time correction on/off (`Y`/`N`)
+- `FONT` - switch between 9-segment font (`1`) and 7-segment font (`2`) for time/date display
 - `CYCL` - turn date cycling on even minutes on/off (`Y`/`N`)
 - `STYLE>` - press `◉` to change time display style (see below)
 - Backup battery status: will show `BAT OK` or `BAT LO`
-- Firmware version, e.g. `Ver 1.1`
+- Firmware version, e.g. `Ver 1.2`
 - `DONE>` - press `◉` to return to normal time display
 
 Hold `◉` to cancel and return to the normal time display.
@@ -133,6 +134,11 @@ To return to normal operation, disconnect and reconnect the power.
 The clock can draw up to 1.5A during operation. It's recommended that you use a high-quality USB power adapter (10 watts or higher), and a "28/24 AWG" USB mini-B cable.
 
 ## Version history
+
+### Version 1.2 (March 21, 2019)
+
+- Reduced number of brightness levels to 4.
+- Added option to change the number font to one that uses a "standard" 7-segment layout which does not use the diagonal segments. Some may find this more readable.
 
 ### Version 1.1 (April 29, 2018)
 

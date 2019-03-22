@@ -33,6 +33,7 @@ uint32_t ticks_since_last_second = 0;
 void SysTick_Handler(void)
 {
   display_update();
+  display_set_digit_font(rtc.settings.alt_font);
 
   /* Read button and RTC events */
   if ((main_loop_tick & INPUT_TICK_MASK) == 0) {

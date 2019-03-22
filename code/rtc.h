@@ -24,7 +24,8 @@ typedef union {
     bits_t display_style:2;
     pad_t               :1;
     flag_t must_be_1    :1;
-    bits_t brightness   :3;
+    bits_t brightness   :2;
+    flag_t alt_font     :1;
     pad_t               :4;
     flag_t must_be_1_2  :1;
   } PACKED;

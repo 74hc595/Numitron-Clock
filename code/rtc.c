@@ -55,7 +55,8 @@ static const rtc_state_t default_state = {
     .date_cycling  = 1,
     .display_style = 0,
     .must_be_1     = 1,
-    .brightness    = 7,
+    .brightness    = 3,
+    .alt_font      = 0,
     .must_be_1_2   = 1
   }
 };

@@ -172,11 +172,18 @@ struct FlagMenuApp : public MenuApp {
   using FlagSetter = void (*)(bool);
   constexpr FlagMenuApp(AppPtr nextapp, AppPtr prevapp, const uint16_t *message,
     const FlagGetter get, const FlagSetter set) :
-    MenuApp(nextapp, prevapp, nullptr, message), get_(get), set_(set) {}
+    MenuApp(nextapp, prevapp, nullptr, message), get_(get), set_(set),
+    yesPattern_(c_Y), noPattern_(c_N) {}
+  constexpr FlagMenuApp(AppPtr nextapp, AppPtr prevapp, const uint16_t *message,
+    const FlagGetter get, const FlagSetter set, uint16_t yesPattern, uint16_t noPattern) :
+    MenuApp(nextapp, prevapp, nullptr, message), get_(get), set_(set),
+    yesPattern_(yesPattern), noPattern_(noPattern) {}
   virtual void draw() const;
   virtual AppPtr update(event_set_t events) const override;
   const FlagGetter get_;
   const FlagSetter set_;
+  uint16_t yesPattern_;
+  uint16_t noPattern_;
 };
 
 struct ValueMenuApp : public MenuApp {
@@ -238,6 +245,7 @@ extern const MenuApp App_SetDatePrompt;
 extern const SetAutoDSTApp App_SetAutoDST;
 extern const MenuApp App_SetDisplayStylePrompt;
 extern const FlagMenuApp App_SetDateCycling;
+extern const FlagMenuApp App_SetDigitFont;
 extern const BatteryStatusApp App_ShowBatteryStatus;
 extern const FirmwareVersionApp App_ShowFirmwareVersion;
 extern const MenuApp App_MenuDone;

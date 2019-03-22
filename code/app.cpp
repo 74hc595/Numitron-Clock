@@ -25,6 +25,7 @@
 
 WRAP_FLAG(sleep)
 WRAP_FLAG(date_cycling)
+WRAP_FLAG(alt_font)
 WRAP_VALUE(display_style)
 
 static bool GET_auto_dst() { return rtc.settings.auto_dst; }
@@ -41,6 +42,7 @@ const uint16_t set_sleep_message[6]    = { 0, 0, 0, c_z, c_z, c_z };
 const uint16_t set_date_message[6]     = { c_arrow, 0, c_E, c_t, c_A, c_D };
 const uint16_t set_adst_message[6]     = { 0, 0, c_t, c_S, c_D, c_A|sP };
 const uint16_t set_style_message[6]    = { c_arrow, c_E, c_L, c_Y, c_t, c_S };
+const uint16_t set_font_message[6]     = { 0, 0, c_t, c_N, c_O, c_F };
 const uint16_t set_cycle_message[6]    = { 0, 0, c_L, c_C, c_Y, c_C };
 const uint16_t done_message[6]         = { c_arrow, 0, c_E, c_N, c_O, c_D };
 const uint16_t battery_low_message[6]  = { c_O, c_L, 0, c_t, c_A, c_B };
@@ -80,8 +82,9 @@ const BatteryLowAlertApp App_BatteryLowAlert(&App_Date);
 const FlagMenuApp App_SetSleepEnabled(&App_SetDatePrompt, &App_MenuDone, set_sleep_message, GET_sleep, SET_sleep);
 const MenuApp App_SetDatePrompt(&App_SetAutoDST, &App_SetSleepEnabled, &App_BeginSetDate, set_date_message);
 const SetAutoDSTApp App_SetAutoDST(&App_SetDisplayStylePrompt, &App_SetDatePrompt, set_adst_message, GET_auto_dst, SET_auto_dst);
-const MenuApp App_SetDisplayStylePrompt(&App_SetDateCycling, &App_SetAutoDST, &App_SetDisplayStyle, set_style_message);
-const FlagMenuApp App_SetDateCycling(&App_ShowBatteryStatus, &App_SetDisplayStylePrompt, set_cycle_message, GET_date_cycling, SET_date_cycling);
+const MenuApp App_SetDisplayStylePrompt(&App_SetDigitFont, &App_SetAutoDST, &App_SetDisplayStyle, set_style_message);
+const FlagMenuApp App_SetDigitFont(&App_SetDateCycling, &App_SetDisplayStylePrompt, set_font_message, GET_alt_font, SET_alt_font, c_2alt, c_1);
+const FlagMenuApp App_SetDateCycling(&App_ShowBatteryStatus, &App_SetDigitFont, set_cycle_message, GET_date_cycling, SET_date_cycling);
 const BatteryStatusApp App_ShowBatteryStatus(&App_ShowFirmwareVersion, &App_SetDateCycling);
 const FirmwareVersionApp App_ShowFirmwareVersion(&App_MenuDone, &App_ShowBatteryStatus, firmware_version_message);
 const MenuApp App_MenuDone(&App_SetSleepEnabled, &App_ShowFirmwareVersion, &App_Clock, done_message);
@@ -127,7 +130,7 @@ bool in_12_hour_mode() {
 
 
 static uint16_t am_pm_indicator_for_hour(bcd_t hour) {
-  return (hour < 0x12) ? sB|sG|sH : sE|sG|sI;
+  return pattern_for_bcd_digit((hour < 0x12) ? 0xA : 0xB);
 }
 
 
@@ -146,11 +149,13 @@ void App::init() const
 }
 
 
+static const uint8_t brightness_table[4] = { 2, 3, 5, 8 };
+
 void StartupApp::init() const
 {
   /* Ensure display is on at appropriate brightness */
   /* when powering up or waking from sleep. */
-  display_set_brightness(rtc.settings.brightness+1);
+  display_set_brightness(brightness_table[rtc.settings.brightness]);
 }
 
 
@@ -159,7 +164,9 @@ AppPtr MainApp::update(event_set_t events) const
   draw();
 
   if (events & BTN1_TAP) {
-    rtc.settings.brightness = display_decrease_brightness_wrap()-1;
+    uint8_t newbright = (rtc.settings.brightness-1) & 3;
+    display_set_brightness(brightness_table[newbright]);
+    rtc.settings.brightness = newbright;
     rtc_update_settings(&rtc.settings);
   }
 
@@ -533,7 +540,7 @@ AppPtr FirmwareVersionApp::update(event_set_t events) const
 void FlagMenuApp::draw() const
 {
   MenuApp::draw();
-  display[0] = (get_()) ? c_Y : c_N;
+  display[0] = (get_()) ? yesPattern_ : noPattern_;
 }
 
 
